@@ -1,25 +1,62 @@
-const mongoose= require('mongoose')
-const Schema= mongoose.Schema
 
-const bookingSchema= new Schema({
-    pickup_location:{type:String},
-    drop_location:{type:String},
-    start_date:{type:String},
-    end_date:{type:String},
-    car_id:{type:String},
-    car_category:{type:String, enum:['car','electric car','van']},
-    car_model:{type:String},
-    car_name:{type:String},
-    car_brand:{type:String},
-    user_id:{type:String},
-    user_email:{type:String, require: true},
-    user_name:{type:String},
-    user_phone:{type:String},
-    price:{type:Number},
-    status:{type:String, enum:["pending","approved","ongoing","completed"], default:"pending"}
 
-})
 
-const bookingModel= mongoose.model('booking', bookingSchema );
+const {DataTypes}= require('sequelize')
+const sequelize= require('../config/db')
+const {v4:uuidv4}= require('uuid')
 
-module.exports= bookingModel;
+const bookingModel= sequelize.define("booking",{
+    _id: {
+        type: DataTypes.STRING, // Use STRING for UUID
+        primaryKey: true, // Set as primary key
+        defaultValue: () => uuidv4(), // Generate a random UUID
+    },
+
+    pickup_location:{
+        type:DataTypes.STRING
+    },
+    drop_location:{
+        type:DataTypes.STRING
+    },
+    start_date:{
+        type:DataTypes.STRING
+    },
+    end_date:{
+        type:DataTypes.STRING
+    },
+    car_id:{
+        type:DataTypes.STRING
+    },
+    car_category:{
+        type:DataTypes.ENUM('car','lectric car','van')
+    },
+    car_model:{
+        type:DataTypes.STRING
+    },
+    car_name:{
+        type:DataTypes.STRING
+    },
+    car_brand:{
+        type:DataTypes.STRING
+    },
+    user_id:{
+        type:DataTypes.STRING
+    },
+    user_email:{
+        type:DataTypes.STRING
+    },
+    user_name:{
+        type:DataTypes.STRING
+    },
+    user_phone:{
+        type:DataTypes.STRING
+    },
+    price:{
+        type:DataTypes.FLOAT
+    },
+    status:{
+        type:DataTypes.ENUM("pending","approved","ongoing","completed"),
+        defaultValue: "pending"
+    }
+});
+module.exports= bookingModel

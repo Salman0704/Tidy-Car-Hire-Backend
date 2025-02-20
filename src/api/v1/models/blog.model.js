@@ -1,42 +1,60 @@
-const mongoose= require('mongoose')
-const Schema= mongoose.Schema
 
-const commentSchema = new Schema({
-    fullName: { 
-        type: String, 
-        required: true 
+
+
+const { DataTypes, Model } = require('sequelize');
+const sequelize = require('../config/db');
+const { v4: uuidv4 } = require('uuid');
+
+class Comment extends Model {}
+Comment.init({
+    fullName: {
+        type: DataTypes.STRING,
+        allowNull: false
     },
-    email: { 
-        type: String, 
-        required: true 
+    email: {
+        type: DataTypes.STRING,
+        allowNull: false
     },
-    comment: { 
-        type: String, 
-        required: true 
+    comment: {
+        type: DataTypes.TEXT,
+        allowNull: false
     },
-    createdAt: { 
-        type: Date, 
-        default: Date.now 
-    },
-    // For nested replies to comments
-    replies: [{
-        fullName: { type: String, required: true },
-        email: { type: String, required: true },
-        comment: { type: String, required: true },
-        createdAt: { type: Date, default: Date.now }
-    }]
+    createdAt: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW
+    }
+}, {
+    sequelize,
+    modelName: 'Comment',
+    timestamps: false // We're handling createdAt manually
 });
 
-const blogSchema= new Schema({
-    image:{type:String},
-    heading:{type:String},
-    description:{type:String},
-    author:{type:String},
-    date:{type:String},
-    time:{type:String},
-    comments:[commentSchema]
-})
+// Define Blog model
+class blogModel extends Model {}
+blogModel.init({
+    // _id: {
+    //     type: DataTypes.STRING, // Use STRING for UUID
+    //     primaryKey: true, // Set as primary key
+    //     defaultValue: () => uuidv4(), // Generate a random UUID
+    // },
+    image: DataTypes.STRING,
+    heading: DataTypes.STRING,
+    description: DataTypes.TEXT,
+    author: DataTypes.STRING,
+    date: DataTypes.STRING,
+    time: DataTypes.STRING
+}, {
+    sequelize,
+    modelName: 'Blog',
+    timestamps: false
+});
 
-const blogModel= mongoose.model('blog', blogSchema)
+// Set up associations
+blogModel.hasMany(Comment, { onDelete: 'CASCADE' });
+Comment.belongsTo(blogModel);
 
-module.exports= blogModel;
+
+// Sync models with database
+sequelize.sync();
+
+module.exports = { blogModel, Comment};

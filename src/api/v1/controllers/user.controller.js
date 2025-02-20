@@ -25,12 +25,13 @@ module.exports={
                 phone:req.body.phoneNumber,
                 address: req.body.address
                }
+               await userModel.sync()
                const userExists=await userModel.findOne({email:data.email})
                if(userExists){
                 badRequest(res,'user has already been registered')
                }else{
-                const userData=new userModel(data)
-               const userDetails=await userData.save()
+                // const userData=new userModel(data)
+               const userDetails=await userModel.create(data)
                if(userDetails){
                 const token=generateToken(userDetails)
                 success(res,'user has been registered successfully',{userDetails,token})
@@ -84,7 +85,18 @@ module.exports={
                 const data=req.body;
                 if(token){
                     const userData=parseJwt(token)
-                    const userDetails=await userModel.findByIdAndUpdate(userData.user_id,data,{new:true})
+                    const userDetails= await userModel.findByPk(userData.user_id)
+                    if(userDetails){
+                        if(data.password){
+                            const salt=await bcrypt.genSalt(10)
+                            data.password=await bcrypt.hash(data.password,salt)
+                            await userDetails.update(data)
+                        }else{
+                            await userDetails.update(data)
+                        }
+                       
+                    }
+                    // const userDetails=await userModel.findByIdAndUpdate(userData.user_id,data,{new:true})
                     userDetails? success(res,'user details has been updated successfully',userDetails):badRequest(res,'cannot find and update user')
 
 
@@ -104,7 +116,7 @@ module.exports={
                 serverValidation(res,{"message":"server error has occured","errors":errors.array()})
             }else{
                 const id=req.params.id;
-                const userDetails=await userModel.findById(id)
+                const userDetails=await userModel.findByPk(id)
                 userDetails ? success(res,'here is the user details',userDetails):notFound(res,'cannot find user this user')
             }
 

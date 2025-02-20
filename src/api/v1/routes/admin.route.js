@@ -49,7 +49,7 @@ router.get('/testimonial/all', authenticateAdmin,getAllTestimonial)
 // logo
 router.post('/logo/add', authenticateAdmin, addLogo)
 router.get('/logo/all', authenticateAdmin, getAllLogo)
-router.get('/logo/delete/id', authenticateAdmin, deleteLogo)
+router.get('/logo/delete/:id', authenticateAdmin, deleteLogo)
 router.get('/logo/id/:id', authenticateAdmin, getLogoById)
 
 // blog

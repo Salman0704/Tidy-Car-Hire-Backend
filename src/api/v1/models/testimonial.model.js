@@ -1,13 +1,27 @@
-const mongoose=require('mongoose');
-const Schema= mongoose.Schema;
+const {DataTypes}= require('sequelize')
+const sequelize= require('../config/db')
+const {v4: uuidv4}= require('uuid')
 
-const testimonialSchema= new Schema({
-    name:{type:String},
-    position:{type:String, enum:['Client','Team Member'], default:"Client"},
-    image:{type:String},
-    description:{type:String}
+
+const testimonialModel= sequelize.define("testimonial",{
+    _id: {
+        type: DataTypes.STRING, // Use STRING for UUID
+        primaryKey: true, // Set as primary key
+        defaultValue: () => uuidv4(), // Generate a random UUID
+    },
+    name:{
+        type: DataTypes.STRING
+    },
+    position:{
+        type:DataTypes.ENUM('Client','Team Member'),
+        defaultValue:'Client'
+    },
+    Image:{
+        type:DataTypes.STRING
+    },
+    description:{
+        type:DataTypes.STRING
+    }
+
 });
-
-const testimonialModel= mongoose.model('testimonial', testimonialSchema)
-
 module.exports= testimonialModel;

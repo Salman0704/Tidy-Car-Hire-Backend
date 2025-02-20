@@ -10,7 +10,7 @@ module.exports={
             if(!errors.isEmpty()){
             serverValidation(res,{"message":"server error has occured","errors":errors.array()})  
             }else{
-                const testimonialDetails= await testimonialModel.find()
+                const testimonialDetails= await testimonialModel.findAll()
                 testimonialDetails? success(res,"here are all the testimonial list", testimonialDetails): notFound(res,"cannot get any testimonial to show right now")
             }
         }catch(error){
@@ -25,7 +25,7 @@ module.exports={
             serverValidation(res,{"message":"server error has occured","errors":errors.array()})  
             }else{
                 const id= req.params.id;
-                const testimonialDetails= await testimonialModel.findById(id)
+                const testimonialDetails= await testimonialModel.findByPk(id)
                 testimonialDetails? success(res,'here is the required testimonial', testimonialDetails): notFound(res,"no such testimonial exist")
             }
         }catch(error){
@@ -40,7 +40,7 @@ module.exports={
             serverValidation(res,{"message":"server error has occured","errors":errors.array()})  
             }else{
                 const position= req.body.position;
-                const testimonialList= await testimonialModel.find({"position": position})
+                const testimonialList= await testimonialModel.findAll({"position": position})
                 testimonialList? success(res,"here are the testimonials by position", testimonialList): notFound(res,"cannot find and data for the required position");
             }
         }catch(error){

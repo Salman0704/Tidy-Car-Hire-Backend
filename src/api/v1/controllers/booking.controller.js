@@ -17,8 +17,8 @@ module.exports={
                 // { ...json1, ...json2 };
                 // data= { ... data, ...{"user_id":req.param.user_id}}
                 console.log('hi')
-                const bookingData= new bookingModel(data)
-                const bookingDetails= await bookingData.save()
+                await bookingModel.sync()
+                const bookingDetails= await bookingModel.create(data)
 
                 bookingDetails? success(res,"booking has been added successfully", bookingDetails) : notFound(res,"sorry cannot process the booking right now")
 
@@ -37,7 +37,7 @@ module.exports={
             }else{
                 const user_email= req.body.email;
 
-                const booking= await bookingModel.find({"user_email":user_email})
+                const booking= await bookingModel.findAll({"user_email":user_email})
                 booking? success(res,"here are all the bookings by user", booking): notFound(res,"sorry to inform you that no booking for the customers had found")
             }
         }catch(error){
@@ -55,7 +55,7 @@ module.exports={
                 // const user_id= req.params.user_id;
                 const booking_id= req.params.id;
 
-                const booking=await bookingModel.findById(booking_id)
+                const booking=await bookingModel.findByPk(booking_id)
                 booking? success(res,'here is the booking you looking for', booking): notFound(res,"does not exists");
             }
         }catch(error){
@@ -71,7 +71,10 @@ module.exports={
             }else{
                 const booking_id= req.params.id;
                 const data= req.body;
-                const bookingDetails= await bookingModel.findByIdAndUpdate(booking_id,data,{new:true})
+                const bookingDetails = await bookingModel.findByPk(booking_id); // Find the record by primary key
+                if (bookingDetails) {
+                    await bookingDetails.update(data); // Update the record with new data
+                }
                 bookingDetails? success(res,"booking has been updated successfully",bookingDetails): notFound(res,"cannot update the booking right now")
             }
             
@@ -87,7 +90,10 @@ module.exports={
                 serverValidation(res,{"message":"error has been ocured", "error": errors.array()})
             }else{
                 const booking_id= req.params.id;
-                const bookiungDetails= await bookingModel.findByIdAndDelete(booking_id);
+                const bookingDetails = await bookingModel.findByPk(booking_id); // Find the record by primary key
+                if (bookingDetails) {
+                    await bookingDetails.destroy(); // Update the record with new data
+                }
                 bookiungDetails? success(res,"booking has been deleted successfully", bookiungDetails): notFound(res,'cannot delete the booking right now')
             }
             
@@ -103,7 +109,7 @@ module.exports={
                 serverValidation(res,{"message":"error has been occured","errors":errors.array()})
             }else{
                 const carId= req.params.id;
-                const bookingList= await bookingModel.find({car_id: carId, status: "approved" });
+                const bookingList= await bookingModel.findAll({car_id: carId, status: "approved" });
                 bookingList.length>0? success(res,"here are the list of booking for the car", bookingList): notFound(res,"carid not found in the list")
             }
         }catch(error){

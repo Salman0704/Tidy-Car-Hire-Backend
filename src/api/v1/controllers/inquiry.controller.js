@@ -18,9 +18,9 @@ module.exports={
                 let data= req.body;
 
                 
-
-                const inquiryData= new inquiryModel(data)
-                const inquiryDetails= await inquiryData.save()
+                await inquiryModel.sync()
+                // const inquiryData= new inquiryModel(data)
+                const inquiryDetails= await inquiryModel.create(data)
                 inquiryDetails? success(res,"inquiry submitted","Your inquiry has been submitted we will get back to you with an update"): badRequest(res,"cannot post the inquiry right now")
 
             }
@@ -37,9 +37,9 @@ module.exports={
                 serverValidation(res,{"message":"error has been ocured", "error": errors.array()})
             }else{
                 let email=req.body.email;
-
-                const newsLetterData= new newsLetterModel({email})
-                const newsLetterDetails= await newsLetterData.save()
+                await newsLetterModel.sync()
+                // const newsLetterData= new newsLetterModel({email})
+                const newsLetterDetails= await newsLetterModel.create({email})
                 newsLetterDetails ? success(res,'email submitted successfully', "Thanks for subscribing to our newsletter"): notFound(res,'sorry for your inconvinence')
             }
         }catch(error){

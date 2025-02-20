@@ -1,12 +1,11 @@
-const mongoose=require('mongoose')
-const Schema=mongoose.Schema 
+const {DataTypes}= require('sequelize')
+const sequelize= require('../config/db')
+const {v4:uuidv4}= require('uuid')
 
-
-const newsLetterSchema= new Schema({
-    email:{type:String}
-})
-
-
-const newsLetterModel= mongoose.model('newsletter', newsLetterSchema)
+const newsLetterModel= sequelize.define('newsletter',{
+    email:{
+        type:DataTypes.STRING
+    }
+});
 
 module.exports=newsLetterModel

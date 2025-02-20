@@ -14,10 +14,10 @@ module.exports={
                     if(!errors.isEmpty()){
                         serverValidation(res,{"message":"error has been occured","errors":errors.array()})
                     }else{
-                        const carList=await serviceModel.find()
+                        const carList=await serviceModel.findAll()
                         if(carList.length>0){
                             const updatedCarList = carList.map((car) => ({
-                                ...car._doc,
+                                ...car.get({plain:true}),
                                 imgUrl:car.imgUrl?`${req.protocol}://${req.get("host")}/${car.imgUrl}`:null
                                 // imgUrl: car.imgUrl? `${req.protocol}://${req.get("host")}/${car.imgUrl}`
                                   
@@ -45,7 +45,7 @@ module.exports={
                 const carList=await serviceModel.find({"carCategory":carCategory,"carStatus": true})
                 if(carList.length>0){
                     const updatedCarList = carList.map((car) => ({
-                        ...car._doc,
+                        ...car.get({plain:true}),
                         imgUrl:car.imgUrl?`${req.protocol}://${req.get("host")}/${car.imgUrl}`:null
                         // imgUrl: car.imgUrl? `${req.protocol}://${req.get("host")}/${car.imgUrl}`
                           
@@ -71,7 +71,7 @@ module.exports={
                 serverValidation(res,{"message":"error has been ocured", "error": errors.array()})
             }else{
                 const id=req.params.id;
-                let carList=await serviceModel.findById(id);
+                let carList=await serviceModel.findOne({_id:id});
                 // console.log(carList)
 
                 // if (carList && typeof carList === "object") {
@@ -105,10 +105,10 @@ module.exports={
             if(!errors.isEmpty()){
                 serverValidation(res,{"message":"error has been ocured", "error": errors.array()})
             }else{
-                const carList= await serviceModel.find({"carStatus":true})
+                const carList= await serviceModel.findAll({"carStatus":true})
                 if(carList.length>0){
                     const updatedCarList = carList.map((car) => ({
-                        ...car._doc,
+                        ...car.get({plain:true}),
                         imgUrl:car.imgUrl?`${req.protocol}://${req.get("host")}/${car.imgUrl}`:null
                         // imgUrl: car.imgUrl? `${req.protocol}://${req.get("host")}/${car.imgUrl}`
                           
@@ -135,10 +135,10 @@ module.exports={
             }else{
                 const carType=req.body.type || "car";
 
-                const carList= await serviceModel.find({"carType": carType});
+                const carList= await serviceModel.findAll({"carType": carType});
                 if(carList.length>0){
                     const updatedCarList = carList.map((car) => ({
-                        ...car._doc,
+                        ...car.get({plain:true}),
                         imgUrl:car.imgUrl?`${req.protocol}://${req.get("host")}/${car.imgUrl}`:null
                         // imgUrl: car.imgUrl? `${req.protocol}://${req.get("host")}/${car.imgUrl}`
                           
@@ -164,10 +164,10 @@ module.exports={
             }else{
                 console.log("welcome back")
                 const data= req.body;
-                const carList= await serviceModel.find({'carType': data.vehicleType})
+                const carList= await serviceModel.findAll({'carType': data.vehicleType})
                 if(carList.length>0){
                     const updatedCarList = carList.map((car) => ({
-                        ...car._doc,
+                        ...car.get({plain:true}),
                         imgUrl:car.imgUrl?`${req.protocol}://${req.get("host")}/${car.imgUrl}`:null
                         // imgUrl: car.imgUrl? `${req.protocol}://${req.get("host")}/${car.imgUrl}`
                           
