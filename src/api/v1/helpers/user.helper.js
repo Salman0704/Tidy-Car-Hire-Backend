@@ -16,8 +16,8 @@ async function registerUser(data){
         phone: data.phone,
         password: encryptedPassword,
       };
-      const saveData = new userModel(fomattedData);
-      const userData=await saveData.save()
+      
+      const userData= await userModel.create(fomattedData)
       return userData ? userData : false;
     } catch (error) {
       return false;
@@ -26,7 +26,7 @@ async function registerUser(data){
 
   async function getUser(id){
     try{
-        const userDetails=await userModel.findById(id)
+        const userDetails=await userModel.findByPk(id)
         return userDetails? userDetails:false
 
     }catch(error){
