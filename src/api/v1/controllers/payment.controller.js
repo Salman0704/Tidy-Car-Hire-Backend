@@ -69,15 +69,53 @@ module.exports={
               success_url: "http://localhost:3000/payment/success",
               cancel_url: "http://localhost:3000/payment/cancel",
             });
-      
-            return session.id
-              ? success(res, "Payment successful", { id: session.id })
-              : notFound(res, "Payment cannot be processed at this time");
+              if(session.id){
+                success(res, "Payment successful", { id: session.id })
+                // const bookingData= await bookingModel.findByPk(data._id)
+                // if(bookingData){
+                //     await bookingData.update({status:"approved"})
+                //     success(res, "Payment successful", { id: session.id })
+                // }else{
+                //     console.log("booking data not updated")
+                //     success(res, "Payment successful", { id: session.id })
+                // }
+                
+              }else{
+                notFound(res, "Payment cannot be processed at this time");
+              }
           }
         } catch (error) {
           console.log(error);
           onError(res, "API has failed");
         }
+      },
+
+
+      payHook: async(req,res)=>{
+        const sig = req.headers['stripe-signature'];
+
+  let event;
+
+  try {
+    event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
+  } catch (err) {
+    console.error('Webhook Error:', err.message);
+    return res.status(400).send(`Webhook Error: ${err.message}`);
+  }
+
+  if (event.type === 'checkout.session.completed') {
+    const session = event.data.object;
+
+    const bookingData = await bookingModel.findByPk(session.metadata.booking_id);
+    if (bookingData) {
+      await bookingData.update({ status: 'approved' });
+      console.log(`Booking ${bookingData.id} updated to 'approved'`);
+    } else {
+      console.error('Booking not found');
+    }
+  }
+
+  res.json({ received: true });
       }
       
 }

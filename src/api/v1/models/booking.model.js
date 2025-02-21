@@ -21,6 +21,12 @@ const bookingModel= sequelize.define("booking",{
     start_date:{
         type:DataTypes.STRING
     },
+    pickupTime:{
+        type:DataTypes.STRING
+    },
+    dropoffTime:{
+        type:DataTypes.STRING
+    },
     end_date:{
         type:DataTypes.STRING
     },

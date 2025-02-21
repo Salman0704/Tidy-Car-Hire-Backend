@@ -147,7 +147,7 @@ module.exports={
             if(!errors.isEmpty()){
                 serverValidation(res,{"message":"server error has occured","errors":errors.array()})
             }else{
-                const userList=await userModel.find()
+                const userList=await userModel.findAll()
                 userList.length>0 ? success(res,'user has found successfully',userList):notFound(res,'users has not yet being register in our app')
             }
 

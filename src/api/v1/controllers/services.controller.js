@@ -42,7 +42,10 @@ module.exports={
                 serverValidation(res,{"message":"error has been ocured", "error": errors.array()})
             }else{
                 let carCategory=req.params.Category;
-                const carList=await serviceModel.find({"carCategory":carCategory,"carStatus": true})
+                const carList=await serviceModel.findAll({where: {
+                    carType: carCategory, // Ensures exact match,
+                    carStatus: true
+                  }})
                 if(carList.length>0){
                     const updatedCarList = carList.map((car) => ({
                         ...car.get({plain:true}),
@@ -71,7 +74,7 @@ module.exports={
                 serverValidation(res,{"message":"error has been ocured", "error": errors.array()})
             }else{
                 const id=req.params.id;
-                let carList=await serviceModel.findOne({_id:id});
+                let carList=await serviceModel.findOne({where:{_id:id}});
                 // console.log(carList)
 
                 // if (carList && typeof carList === "object") {
